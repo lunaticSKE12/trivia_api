@@ -99,11 +99,9 @@ def create_app(test_config=None):
     @app.route('/questions/<int:id>', methods=['DELETE'])
     def delete_question(id):
         try:
-            question = Question.query.filter_by(id=id).one_or_none()
-
+            question = Question.query.get(id)
             if(question is None):
                 abort(404)
-
             question.delete()
             return jsonify({
                 'success': True,
@@ -133,21 +131,18 @@ def create_app(test_config=None):
                 or (difficulty is None) or (category is None)):
             abort(422)
 
-        try:
-            question = Question(question=question, answer=answer,
-                                difficulty=difficulty, category=category)
-            question.insert()
-            selection = Question.query.order_by(Question.id).all()
-            current_questions = paginate_questions(request, selection)
-            return jsonify({
-                'success': True,
-                'created': question.id,
-                'question_created': question.question,
-                'questions': current_questions,
-                'total_questions': len(Question.query.all())
-            })
-        except:
-            abort(422)
+        question = Question(question=question, answer=answer,
+                            difficulty=difficulty, category=category)
+        question.insert()
+        selection = Question.query.order_by(Question.id).all()
+        current_questions = paginate_questions(request, selection)
+        return jsonify({
+            'success': True,
+            'created': question.id,
+            'question_created': question.question,
+            'questions': current_questions,
+            'total_questions': len(Question.query.all())
+        })
 
     '''
     Create a POST endpoint to get questions based on a search term.
@@ -183,7 +178,7 @@ def create_app(test_config=None):
     '''
     @app.route('/categories/<int:id>/questions')
     def get_question_by_category(id):
-        category = Category.query.filter_by(id=id).one_or_none()
+        category = Category.query.get(id)
         if(category is None):
             abort(404)
         selection = Question.query.filter_by(category=category.id).all()
