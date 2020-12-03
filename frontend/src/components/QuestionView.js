@@ -43,7 +43,6 @@ class QuestionView extends Component {
 
   selectPage(num) {
     this.setState({ page: num }, () => this.getQuestions());
-    this.state.page = num; // set the state to reflect currently selected page
   }
 
   createPagination() {
@@ -86,7 +85,7 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `/questions/search`, //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
